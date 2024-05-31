@@ -45,6 +45,9 @@ def loop_publisher(topic):
                 # Publie les messages sur le topic approprié
                 client.publish(message['topic'], dumps(message["data"], indent = 2))
                 print(f"[RESEND] Message {message['request_id']} publié de la queue sur {message['topic']}")
+                # Clean validated messages
+                messages_collection.delete_many({"validated": True, "topic": topic})
+
             time.sleep(5)
 
     # Connexion au broker MQTT
