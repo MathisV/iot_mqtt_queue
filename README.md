@@ -67,4 +67,4 @@ L'application permet donc de publier des messages MQTT dans une file d'attente e
 1. Le fichier `publisher.py` est responsable de la publication des messages MQTT. Il publie les messages via le protocole MQTT et en parallèle stocke dans une file d'attente spécifique les messages pour renvoyer le premier message de la fille s'il n'a pas encore été consommé. Il nettoie les messages validés dans la base de données MongoDB.
 2. Le fichier `consumer.py` est responsable de la consommation des messages MQTT. Il consomme les messages publiés dans le topic. Les messages consommés sont ensuite tagé comme validé dans la base de données MongoDB.
 
-![Image](https://cdn.discordapp.com/attachments/900788486381129798/1246144307539476490/image.png?ex=666c7553&is=666b23d3&hm=3018073cb55a278f8942db5eaf2ae2a622468f1d32b0453486dafaf3c02e8a66&)
+![Image](https://i.ibb.co/RNrf5By/schema.png)
