@@ -2,7 +2,7 @@ from pymongo import MongoClient
 
 # Configuration de la base de données MongoDB
 MONGO_URI = '<CHANGE_ME>'
-DATABASE_NAME = 'message_queue_db'
+DATABASE_NAME = '<CHANGE_ME>'
 COLLECTION_NAME = 'messages'
 
 # Fonction de connexion à MongoDB

@@ -3,8 +3,8 @@ import paho.mqtt.client as mqtt
 import uuid
 
 # Configuration du broker MQTT
-BROKER = 'ifbb7e86.ala.eu-central-1.emqxsl.com'
-PORT = 8883
+BROKER = '<CHANGE_ME>'
+PORT = <CHANGE_ME>
 USERNAME = '<CHANGE_ME>'
 PASSWORD = '<CHANGE_ME>'
 TLS = True  # Utilisation de TLS/SSL
