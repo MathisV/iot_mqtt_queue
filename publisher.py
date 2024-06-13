@@ -7,16 +7,12 @@ import random
 from bson.json_util import dumps
 from mqtt_config import connect_mqtt  # Import de la fonction de connexion
 from mongo_config import connect_mongo  # Import de la fonction de connexion MongoDB
+import sys
 
-TOPICS = [
-    'temp_201',
-    'temp_202',
-]
 
-def make_request(client):
+def make_request(client, topic):
     # Publie une demande sur le topic commun
     temp = random.randint(-5, 30)
-    topic = random.choice(TOPICS)
     request = {
         'uid': str(uuid.uuid4()),
         'temp': temp,
@@ -36,20 +32,19 @@ def make_request(client):
     messages_collection.insert_one(queue_request)
 
 # Fonction du client de réponse
-def loop_client():
+def loop_publisher(topic):
     def on_connect(client, userdata, flags, rc):
         print(f"Connecté avec le code {rc}")
 
     def check_queues():
         while True:
-            for topic in TOPICS:
-                # Vérifie les messages non validés dans la base de données
-                messages = messages_collection.find({"validated": False, "topic": topic}).sort("timestamp", 1).limit(1)
-                for message in messages:
-                    message.pop('_id', None)
-                    # Publie les messages sur le topic approprié
-                    client.publish(message['topic'], dumps(message["data"], indent = 2))
-                    print(f"[RESEND] Message {message['request_id']} publié de la queue sur {message['topic']}")
+            # Vérifie les messages non validés dans la base de données
+            messages = messages_collection.find({"validated": False, "topic": topic}).sort("timestamp", 1).limit(1)
+            for message in messages:
+                message.pop('_id', None)
+                # Publie les messages sur le topic approprié
+                client.publish(message['topic'], dumps(message["data"], indent = 2))
+                print(f"[RESEND] Message {message['request_id']} publié de la queue sur {message['topic']}")
             time.sleep(5)
 
     # Connexion au broker MQTT
@@ -66,7 +61,7 @@ def loop_client():
 
     # loop pour publier des messages
     while True:
-        make_request(client)
+        make_request(client, topic)
         time.sleep(10)
 
     client.loop_forever()  # Maintient le client en fonctionnement
@@ -76,4 +71,12 @@ messages_collection = connect_mongo()
 
 # Pour exécuter le client
 if __name__ == '__main__':
-    loop_client()
+        
+    # list le paramètre de la commande de lancement
+    if len(sys.argv) == 2:
+        topic = str(sys.argv[1])
+    else:
+        print("Usage: python consumer.py topic")
+        sys.exit(1)
+
+    loop_publisher(topic)
